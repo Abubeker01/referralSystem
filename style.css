@@ -1,0 +1,50 @@
+.chart-container{
+    width: 200px;
+    
+}
+.uperDiv {
+    display: flex; 
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+.U-profile {
+    display: flex;
+    align-items: center; 
+    gap: 10px;
+}
+.U-profile h3{
+    margin: 0;
+}
+ img{
+    width: 50px;
+    height: 40px;
+    border-radius: 30px;
+    border: 2px;
+    float: right;
+    margin-top: 10px;
+    
+    
+}
+.invite{
+    float: right;
+    display: flex;
+    
+}
+.invite button{
+    margin-left: 3px;
+}
+.ref-table{
+    float: right;
+}
+.ref-table td{
+    padding-left: 90px;
+    
+}
+.ref-table th{
+    padding-right: 20px;
+}
+#referralChart{
+    width: 400px;
+    height: 300px
+}
