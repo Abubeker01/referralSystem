@@ -1,7 +1,6 @@
 <?php
 session_start(); 
 
-// Connect to the database
 $host = 'localhost';
 $user = 'root';
 $password = '';
@@ -12,7 +11,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Get email and password from POST request
+
 $email = $_POST['email'];
 $password = $_POST['password'];
 
@@ -28,20 +27,19 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $hashed_password = $row['password'];
 
-    // Verify the password
     if (password_verify($password, $hashed_password)) {
-        // Successful login
-        $_SESSION['id'] = $row['id'];          // Store user ID
-        $_SESSION['username'] = $row['username']; // Store the username in session
+        
+        $_SESSION['id'] = $row['id'];          
+        $_SESSION['username'] = $row['username']; 
 
         header("Location: /REFSYS/index.php");
         exit();
     } else {
-        // Invalid password
+        
         echo json_encode(['status' => 'error', 'message' => 'Incorrect password.']);
     }
 } else {
-    // Email not found
+   
     echo json_encode(['status' => 'error', 'message' => 'Email not found.']);
 }
 

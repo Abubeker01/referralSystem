@@ -1,17 +1,17 @@
 fetch('charts/doughnut_chart.php')
-  .then((response) => response.text())  // Use text to check what is returned
+  .then((response) => response.text())
   .then((rawData) => {
-    console.log('Raw response from PHP:', rawData);  // Log the raw response to see if it contains unexpected characters
+    console.log('Raw response from PHP:', rawData);
     
-    // Try parsing it as JSON
     try {
-      const data = JSON.parse(rawData);
+      const data = JSON.parse(rawData);  // Parse JSON response
       
+      // Fetch points from parsed JSON data
       const directPoints = data.directPoints;  
       const indirectPoints = data.indirectPoints;
       const totalPoints = directPoints + indirectPoints;
-      const last7days = data.last7DaysPoints || [];
-      const noPointsInLast7Days = last7days.every(point => point === 0);
+      const last7days = data.last7days || [];
+      const noPointsInLast7Days = last7days.every(point => point === 0);  // Check if all points are 0
 
       const Rchart = document.querySelector(".chart");
 
@@ -21,27 +21,27 @@ fetch('charts/doughnut_chart.php')
           labels: ['Direct Referrals', 'Indirect Referrals'],
           datasets: [
             {
-              data: noPointsInLast7Days ? [0, 100] : [directPoints, indirectPoints],  // Show full white if no points in last 7 days
-              backgroundColor: noPointsInLast7Days ? ["#FFFFFF", "#FFFFFF"] : ["#007BFF", "#A5DEF1"],  // Blue and white or all white
-              borderColor: "gray",  // Add light gray border for contrast
-              borderWidth: noPointsInLast7Days ? 0.5 : 5,  // Slight border when white t
+              data: noPointsInLast7Days ? [0, 100] : [directPoints, indirectPoints], 
+              backgroundColor: noPointsInLast7Days ? ["#FFFFFF", "#FFFFFF"] : ["#007BFF", "#A5DEF1"],  // Color when no points
+              borderColor: "gray", 
+              borderWidth: noPointsInLast7Days ? 0.5 : 5,  // Border width changes if no points
             },
           ],
         },
         options: {
-          cutout: "75%",
-          rotation: -45,
+          cutout: "75%",  
+          rotation: -45,  
           hoverBorderWidth: 0,
           plugins: {
             legend: {
-              position: "bottom",
+              position: "bottom",  
             },
             tooltip: {
-              enabled: false,
+              enabled: false, 
             },
           },
           responsive: true,
-          maintainAspectRatio: false,
+          maintainAspectRatio: false, 
         },
       });
     } catch (error) {
@@ -53,7 +53,7 @@ fetch('charts/doughnut_chart.php')
   });
 
 
-// Fetch the data from PHP
+
 fetch("charts/chart.php")
   .then((response) => response.json())
   .then((data) => {
@@ -69,10 +69,10 @@ fetch("charts/chart.php")
           {
             label: "Total Referrals",
             data: totalPoints,
-            borderColor: "rgba(0, 122, 255, 1)", // Blue color
+            borderColor: "rgba(0, 122, 255, 1)", 
             fill: false,
-            tension: 0.4, // Smooth curve
-            pointRadius: 0, // Hide points
+            tension: 0.4, 
+            pointRadius: 0,
           },
         ],
       },
@@ -92,16 +92,16 @@ fetch("charts/chart.php")
             type: "time",
             time: {
               unit: "day",
-              stepSize: 6, // Adjust the X-axis to display 6 days
+              stepSize: 6,
               minUnit: "day",
               displayFormats: {
-                day: 'MMM D' // Example format for dates
+                day: 'MMM D'
               },
-              min: labels[0], // Start date
-              max: labels[labels.length - 1], // End date
+              min: labels[0], 
+              max: labels[labels.length - 1],
             },
             grid: {
-              display: false, // No grid lines
+              display: false, 
             },
             title: {
               display: true,
@@ -111,33 +111,33 @@ fetch("charts/chart.php")
           y: {
             beginAtZero: true,
             grid: {
-              display: false, // No grid lines
+              display: false, 
             },
             title: {
               display: true,
               text: "Total Points",
             },
             ticks: {
-              stepSize: 40, // Set the interval to 40 points
+              stepSize: 40,
             },
           },
         },
         plugins: {
           legend: {
-            display: false, // Hide legend
+            display: false,
           },
           tooltip: {
             enabled: true,
             callbacks: {
               label: function (context) {
-                return `${context.parsed.y} Points`; // Format tooltip
+                return `${context.parsed.y} Points`;
               },
             },
           },
         },
         animation: {
           duration: 1000,
-          easing: "easeOutCubic", // Smooth animation
+          easing: "easeOutCubic",
         },
       },
     });
