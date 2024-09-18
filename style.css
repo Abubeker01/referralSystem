@@ -1,50 +1,115 @@
-.chart-container{
-    width: 200px;
-    
+/* style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
 }
+
 .uperDiv {
-    display: flex; 
-    align-items: center;
+    display: flex;
     justify-content: space-between;
-    padding: 10px;
+    align-items: center;
+   
 }
+.uperDiv h1{
+    padding-bottom: 40px;
+}
+
+.header-container {
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.uperDiv h1 {
+    font-size: 28px;
+}
+
 .U-profile {
     display: flex;
-    align-items: center; 
-    gap: 10px;
+    align-items: center;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    padding-left: 250px;
 }
-.U-profile h3{
+
+.U-profile img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.U-profile h3 {
     margin: 0;
 }
- img{
-    width: 50px;
-    height: 40px;
-    border-radius: 30px;
-    border: 2px;
-    float: right;
-    margin-top: 10px;
-    
-    
-}
-.invite{
-    float: right;
+
+.invite {
     display: flex;
-    
+    align-items: center;
+    margin-bottom: 20px;
 }
-.invite button{
-    margin-left: 3px;
+
+.invite textarea {
+    width: 300px;
+    height: 40px;
+    margin-right: 10px;
 }
-.ref-table{
+
+.invite button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.invite button:hover {
+    background-color: #0056b3;
+}
+
+.ref-graph{
+    border-width: 2;
+}
+
+.ref-graph h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+
+#referralChart {
+   
+    max-width: 1200px; 
+    height: 300px;
+   
+}
+
+
+.ref-table {
+    width: 60%;
+    margin-left: 20px;
+    border-collapse: collapse;
     float: right;
 }
-.ref-table td{
-    padding-left: 90px;
-    
+
+.ref-table th, .ref-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
-.ref-table th{
-    padding-right: 20px;
+
+.ref-table th {
+    font-size: 18px;
 }
-#referralChart{
-    width: 400px;
-    height: 300px
+
+.referal-stats {
+    margin-top: 20px;
+    float: left;
+}
+
+.chart-container {
+    width: 300px;
+    height: 300px;
 }

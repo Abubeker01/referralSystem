@@ -1,3 +1,16 @@
+<?php
+session_start(); // Start the session to access the user information
+
+// Check if the user is logged in by verifying the session
+if (!isset($_SESSION['id'])) {
+    // If the user is not logged in, redirect to the login page
+    header("Location: /form/login.php");
+    exit();
+}
+
+// Store the logged-in user's username to display it on the dashboard
+$username = $_SESSION['username'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,24 +27,28 @@
 <body>
     <div class="uperDiv">
         <h1>Referal Dashboard</h1>
-        <!--profile of the user-->
-        <div class="U-profile">
-            <img src="img/refpro.jpg" alt="try">
-            <h3>user-name</h3>
+        <!-- The profile and the textarea/button section should be in a flex container for alignment -->
+        <div class="header-container">
+            <!-- Profile of the user -->
+            <div class="U-profile">
+                <img src="img/refpro.jpg" alt="try">
+                <span><?php echo htmlspecialchars($username); ?></span>
+                
+            </div>
+            <!-- Referal generated code -->
+            <div class="invite">
+                <textarea placeholder="Enter referral link..."></textarea>
+                <button>Share</button>
+            </div>
         </div>
     </div>
 
-
-    <!--referal generated code-->
-    <div class="invite">
-        <textarea name="" id=""></textarea>
-        <button>Share</button>
+    <!--referal monthly chart-->
+    <div class="ref-graph">
+        <h3>Credit Earnings Over the Last 30 Days</h3>
+        <canvas id="referralChart"></canvas>
     </div>
 
-    <!--referal monthly chart-->
-
-    <h1>Credit Earnings Over the Last 7 Days</h1>
-    <canvas class="referralChart"></canvas>
 
     <!--table of referals-->
     <table class="ref-table" style="width:60%">
@@ -52,8 +69,9 @@
         </tr>
     </table>
 
-     <!--referal chart-->
-     <div class="referal-stats">
+    <!--referal chart-->
+    <div class="referal-stats">
+        <h3>Credit Earnings Over the Last 7 Days</h3>
         <div class="chart-container">
             <canvas class="chart"></canvas>
         </div>
