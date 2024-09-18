@@ -7,65 +7,85 @@ function assignReferralPoints($userId, $referralPoints, $conn) {
         3 => 25,   // Third level referral points
     ];
 
-    // Start with the new user's referrer (who referred this userId)
-    $query = "SELECT referrer_id FROM users WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // First, assign points to the referred user (the one who just referred someone)
+    $currentUserId = $userId; // Start with the referred user (userId)
+    $currentLevel = 1;
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $currentUserId = $row['referrer_id']; // Start from the referrer of the newly registered user
+    // Debug: Check user ID for points assignment
+    echo "Assigning points for referral of User ID: " . $userId . "<br>";
 
-        // Track the current level and referrer
-        $currentLevel = 1;
+    // Assign points to the referred user (the one who made the referral)
+    if ($currentLevel <= count($levels)) {
+        // Points for the referred user (level 0 or level 1)
+        $pointsForLevel = $levels[$currentLevel];
+        echo "Assigning " . $pointsForLevel . " points to User ID " . $currentUserId . " at level " . $currentLevel . "<br>";
 
-        // Debug: Check user ID for points assignment
-        echo "Assigning points for referral of User ID: " . $userId . "<br>";
+        // Update the referred user’s points
+        $updateQuery = "UPDATE users SET points = points + ? WHERE id = ?";
+        $updateStmt = $conn->prepare($updateQuery);
+        $updateStmt->bind_param("ii", $pointsForLevel, $currentUserId);
+        $updateStmt->execute();
 
-        while ($currentLevel <= count($levels)) {
-            // Check if there's a valid referrer at this level
-            if ($currentUserId) {
-                // Debug: Output the referrer ID at each level
-                echo "Current Level: " . $currentLevel . " - Referrer ID: " . $currentUserId . "<br>";
+        // Insert into referrals table to track
+        $insertReferral = "INSERT INTO referrals (referrer_id, referred_user_id, points_earned, referral_level, referral_date) 
+                           VALUES (?, ?, ?, ?, NOW())";
+        $insertReferralStmt = $conn->prepare($insertReferral);
+        $insertReferralStmt->bind_param("iiii", $currentUserId, $userId, $pointsForLevel, $currentLevel);
+        $insertReferralStmt->execute();
 
-                // Assign points for this level
+        $currentLevel++; // Move to the next level (referrer chain)
+    }
+
+    // Now, assign points to the referrers in the chain
+    while ($currentLevel <= count($levels)) {
+        // Fetch the user's referrer (if any)
+        $query = "SELECT referrer_id FROM users WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $currentUserId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $referrerId = $row['referrer_id'];
+
+            // Debug: Output the referrer ID at each level
+            echo "Current Level: " . $currentLevel . " - Referrer ID: " . $referrerId . "<br>";
+
+            // If the referrer exists, assign points for this level
+            if ($referrerId) {
                 $pointsForLevel = $levels[$currentLevel];
-                echo "Assigning " . $pointsForLevel . " points to referrer ID " . $currentUserId . " at level " . $currentLevel . "<br>";
+                echo "Assigning " . $pointsForLevel . " points to referrer ID " . $referrerId . " at level " . $currentLevel . "<br>";
 
-                // Update referrer’s points
+                // Update the referrer's points
                 $updateQuery = "UPDATE users SET points = points + ? WHERE id = ?";
                 $updateStmt = $conn->prepare($updateQuery);
-                $updateStmt->bind_param("ii", $pointsForLevel, $currentUserId);
+                $updateStmt->bind_param("ii", $pointsForLevel, $referrerId);
                 $updateStmt->execute();
 
-                // Insert a new entry in the referrals table for tracking
+                // Insert into referrals table
                 $insertReferral = "INSERT INTO referrals (referrer_id, referred_user_id, points_earned, referral_level, referral_date) 
                                    VALUES (?, ?, ?, ?, NOW())";
                 $insertReferralStmt = $conn->prepare($insertReferral);
-                $insertReferralStmt->bind_param("iiii", $currentUserId, $userId, $pointsForLevel, $currentLevel);
+                $insertReferralStmt->bind_param("iiii", $referrerId, $currentUserId, $pointsForLevel, $currentLevel);
                 $insertReferralStmt->execute();
 
-                // Move to the next referrer up in the chain (indirect referral)
-                $query = "SELECT referrer_id FROM users WHERE id = ?";
-                $stmt = $conn->prepare($query);
-                $stmt->bind_param("i", $currentUserId);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-
-                $currentUserId = $row['referrer_id']; // Move up the chain
+                // Move to the next referrer
+                $currentUserId = $referrerId;
                 $currentLevel++;
             } else {
                 // No more referrers, stop the loop
                 break;
             }
+        } else {
+            // No referrer found, exit the loop
+            break;
         }
-
-        // Debug: Final output
-        echo "Points assigned successfully!<br>";
     }
+
+    // Debug: Final output
+    echo "Points assigned successfully!<br>";
 }
+
 
 ?>
