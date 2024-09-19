@@ -21,15 +21,15 @@ function fetchReferrals() {
                 const nameCell = document.createElement("td");
                 nameCell.textContent = referral.ref_name;
 
-                const idCell = document.createElement("td");
-                idCell.textContent = referral.ref_id;
+                const emailCell = document.createElement("td");
+                emailCell.textContent = referral.ref_email;
 
                 const pointsCell = document.createElement("td");
                 pointsCell.textContent = referral.points_earned;
 
                
                 row.appendChild(nameCell);
-                row.appendChild(idCell);
+                row.appendChild(emailCell);
                 row.appendChild(pointsCell);
 
                 
