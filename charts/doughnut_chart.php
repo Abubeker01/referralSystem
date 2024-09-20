@@ -29,8 +29,17 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Query to fetch total points for 'direct' and 'indirect' referrals for the logged-in user
-$query = "
+// Query to fetch total points for 'direct' and 'indirect' referrals for all time
+$totalPointsQuery = "
+    SELECT
+        IFNULL(SUM(CASE WHEN referral_level = 1 THEN points_earned ELSE 0 END), 0) AS total_direct_points,
+        IFNULL(SUM(CASE WHEN referral_level > 1 THEN points_earned ELSE 0 END), 0) AS total_indirect_points
+    FROM referrals
+    WHERE referrer_id = ?;  -- Filter by logged-in user ID
+";
+
+// Query to fetch points earned in the last 7 days for 'direct' and 'indirect' referrals
+$last7daysPointsQuery = "
     SELECT
         IFNULL(SUM(CASE WHEN referral_level = 1 THEN points_earned ELSE 0 END), 0) AS direct_points,
         IFNULL(SUM(CASE WHEN referral_level > 1 THEN points_earned ELSE 0 END), 0) AS indirect_points
@@ -40,7 +49,7 @@ $query = "
 ";
 
 // Query to fetch points earned per day for the last 7 days
-$last7days_query = "
+$last7daysQuery = "
     SELECT
         DATE(referral_date) AS date,
         IFNULL(SUM(points_earned), 0) AS points_per_day
@@ -50,29 +59,40 @@ $last7days_query = "
     GROUP BY DATE(referral_date);
 ";
 
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $user_id); // Bind the user ID to the query
-$stmt->execute();
-$result = $stmt->get_result();
+$stmt_total = $conn->prepare($totalPointsQuery);
+$stmt_total->bind_param("i", $user_id);
+$stmt_total->execute();
+$result_total = $stmt_total->get_result();
 
-// for the second query (points per day)
-$stmt_last7days = $conn->prepare($last7days_query);
+$stmt_last7daysPoints = $conn->prepare($last7daysPointsQuery);
+$stmt_last7daysPoints->bind_param("i", $user_id);
+$stmt_last7daysPoints->execute();
+$result_last7daysPoints = $stmt_last7daysPoints->get_result();
+
+$stmt_last7days = $conn->prepare($last7daysQuery);
 $stmt_last7days->bind_param("i", $user_id);
 $stmt_last7days->execute();
 $result_last7days = $stmt_last7days->get_result();
 
 $response = [];
 
-// Handle direct and indirect points
-if ($result) {
-    $data = $result->fetch_assoc();
-    $response['directPoints'] = $data['direct_points'] ?? 0;
-    $response['indirectPoints'] = $data['indirect_points'] ?? 0;
+if ($result_total) {
+    $totalData = $result_total->fetch_assoc();
+    $response['totalDirectPoints'] = $totalData['total_direct_points'] ?? 0;
+    $response['totalIndirectPoints'] = $totalData['total_indirect_points'] ?? 0;
 } else {
-    $response['error'] = "Query error: " . $conn->error;
+    $response['error'] = "Query error (total points): " . $conn->error;
 }
 
-// Handle points per day for the last 7 days
+
+if ($result_last7daysPoints) {
+    $last7daysData = $result_last7daysPoints->fetch_assoc();
+    $response['directPoints'] = $last7daysData['direct_points'] ?? 0;
+    $response['indirectPoints'] = $last7daysData['indirect_points'] ?? 0;
+} else {
+    $response['error'] = "Query error (last 7 days points): " . $conn->error;
+}
+
 if ($result_last7days) {
     $last7days = [];
     while ($row = $result_last7days->fetch_assoc()) {

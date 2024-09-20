@@ -2,12 +2,12 @@
 
 session_start();
 
-// Check if the user is logged in
+
 if (!isset($_SESSION['id'])) {
     echo json_encode(['error' => 'User not logged in']);
     exit();
 }
-// Fetch user ID from the session
+
 $user_id = $_SESSION['id']; 
 
 if (!$user_id) {
@@ -17,7 +17,7 @@ if (!$user_id) {
 
 $pdo = new PDO('mysql:host=localhost;dbname=referal_system', 'root', '');
 
-// Fetch total points grouped by date
+
 $query = $pdo->prepare("
     SELECT referral_date AS date, SUM(points_earned) AS total_points
     FROM referrals

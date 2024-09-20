@@ -48,6 +48,7 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    padding-left: 100px;
 }
 
 .invite textarea {
@@ -68,9 +69,18 @@ body {
 .invite button:hover {
     background-color: #0056b3;
 }
+.invite label{
+    font-weight: 700;
+    margin-right: 5px;
+}
 
-.ref-graph{
-    border-width: 2;
+.ref-graph {
+    border-width: 2px; 
+    border-style: solid;  
+    border-color: #E0E0E0; 
+    padding: 5px;  
+    background-color: #fff;  
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  \
 }
 
 .ref-graph h3 {
@@ -78,13 +88,11 @@ body {
     margin-bottom: 10px;
 }
 
-
 #referralChart {
-   
-    max-width: 1200px; 
-    height: 300px;
-   
+    max-width: 100%;  /* Ensure chart stays within the container */
+    height: 300px;  /* Fixed height for the chart */
 }
+
 
 
 .ref-table {

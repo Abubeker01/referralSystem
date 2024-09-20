@@ -1,3 +1,7 @@
+<?php
+$referral_code = isset($_GET['referral']) ? $_GET['referral'] : null;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +24,7 @@
             <input type="password" id="password" name="password" required>
 
             <label for="referral_code">Referral Code (optional):</label>
-            <input type="text" id="referral_code" name="referral_code">
+            <input type="text" name="referral_code" value="<?php echo htmlspecialchars($referral_code); ?>"><br>
 
             <button type="submit">Sign Up</button>
             <p id="message" class="message"></p>
@@ -28,7 +32,5 @@
         <p>If you have an account, <a href="login.php" class="login-link">log in here</a>.</p>
     </div>
 
-
-<script type="module" src="form.js"></script>
 </body>
 </html>
