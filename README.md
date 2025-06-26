@@ -1,12 +1,6 @@
-Search files...
-Ran tool
-Based on the analysis of your project files, here is a suitable README for your referral system project:
-
----
-
 # Referral System
 
-A decentralized referral system web application that allows users to register, log in, and earn points by referring others. The system supports multi-level referrals, tracks points, and provides visual analytics of referral activity.
+A referral system web application that allows users to register, log in, and earn points by referring others. The system supports multi-level referrals, tracks points, and provides visual analytics of referral activity.
 
 ## Features
 
